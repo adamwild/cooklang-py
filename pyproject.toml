@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cooklang"
+version = "0.0.1"
+authors = [
+  {name="adamwild"},
+]
+description = "A cooklang parser in Python"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+    "License :: OSI Approved :: MIT License",
+]
+dependencies = [
+    "lark"
+]
+
+[project.urls]
+Homepage = "https://github.com/adamwild/cooklang-py"
+Issues = "https://github.com/adamwild/cooklang-py/issues"
+Cooklang_page = "https://cooklang.org/"

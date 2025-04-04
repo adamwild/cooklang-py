@@ -1,0 +1,88 @@
+start : recipe
+
+// recipe = { metadata | step | note }- ;
+recipe : (metadata | step | NOTE)+
+
+//
+// (* not sure how to show that, but two below should start from a new line *)
+// metadata = ">", ">", { text item - ":" }-, ":", { text item }-, new line character
+metadata : LINE_METADATA | YAML_METADATA
+LINE_METADATA : ">>" /[^\n\r\u0085\u2028\u2029:]+/ ":" TEXT_ITEM+ NEW_LINE_CHARACTER
+
+// YAML Metadata
+YAML_METADATA : /(?<=\n|^)/ "---" BLANK_LINE (META_KEY ":" META_VALUE BLANK_LINE)+ "---" (BLANK_LINE | NEW_LINE_CHARACTER)
+META_KEY : /[^\n\r\u0085\u2028\u2029:]+/
+META_VALUE : TEXT_ITEM+
+
+// step     = { text item | ingredient | cookware | timer }-, new line character, blank line ;
+step : (TEXT_ITEM | ingredient | cookware | TIMER)+ NEW_LINE_CHARACTER BLANK_LINE
+
+TEXT : TEXT_ITEM+
+//
+// note marker = ">" ;
+NOTE_MARKER : ">"
+// note = { note marker, { text item }, blank line }-, blank line ;
+NOTE : (NOTE_MARKER TEXT_ITEM+ BLANK_LINE)+ BLANK_LINE 
+//
+// ingredient           = one word ingredient | multiword ingredient ;
+// | MULTIWORD_INGREDIENT???
+ingredient : ONE_WORD_INGREDIENT | MULTIWORD_INGREDIENT
+// one word ingredient  = "@", one word component ;
+ONE_WORD_INGREDIENT : "@" ONE_WORD_COMPONENT
+// multiword ingredient = "@", multiword component ;
+MULTIWORD_INGREDIENT :  "@" MULTIWORD_COMPONENT
+//
+// cookware             = one word cookware | multiword cookware ;
+cookware : ONE_WORD_COOKWARE | MULTIWORD_COOKWARE
+// one word cookware    = "#", one word component ;
+ONE_WORD_COOKWARE : "#" ONE_WORD_COMPONENT
+// multiword cookware   = "#", multiword component ;
+MULTIWORD_COOKWARE : "#" MULTIWORD_COMPONENT
+//
+// timer                = no name timer | one word timer | multiword timer ;
+TIMER : NO_NAME_TIMER | ONE_WORD_TIMER | MULTIWORD_TIMER
+// no name timer        = "~", no name component ;
+NO_NAME_TIMER : "~" NO_NAME_COMPONENT
+// one word timer       = "~", one word component ;
+ONE_WORD_TIMER : "~" ONE_WORD_COMPONENT
+// multiword timer      = "~", multiword component ;
+MULTIWORD_TIMER : "~" MULTIWORD_COMPONENT
+//
+// no name component    =                             "{", [ amount ], "}" ;
+NO_NAME_COMPONENT : "{" AMOUNT? "}"
+// one word component   = word,                     [ "{", [ amount ], "}" ] ;
+ONE_WORD_COMPONENT : WORD ( "{" AMOUNT? "}" )?
+// multiword component  = word, { text item - "{" }-, "{", [ amount ], "}" ;
+MULTIWORD_COMPONENT : WORD (WHITE_SPACE | "-")+ /[^\n\r\u0085\u2028\u2029{]+/ "{" AMOUNT? "}"
+//
+// amount   = quantity | ( quantity, "%", units ) ;
+AMOUNT : QUANTITY | (QUANTITY "%" UNITS)
+// quantity = { text item - "%" - "}" }- ;
+QUANTITY : /[^\n\r\u0085\u2028\u2029%}]+/
+// units    = { text item - "}" }- ;
+UNITS : /[^\n\r\u0085\u2028\u2029}]+/
+//
+// word      = { text item - white space - punctuation character }- ;
+WORD : /[^\n\r\u0085\u2028\u2029\p{Zs}\u0009\p{P}]+/
+// text item = ? any character except new line character ? ;
+TEXT_ITEM : /[^\n\r\u0085\u2028\u2029]/
+
+
+// (* https://en.wikipedia.org/wiki/Template:General_Category_(Unicode) *)
+// new line character    = ? newline characters (U+000A ~ U+000D, U+0085, U+2028, and U+2029) ? ;
+NEW_LINE_CHARACTER : "\n" | "\r" | /\u0085/ | /\u2028/ | /\u2029/
+// white space           = ? Unicode General Category Zs and CHARACTER TABULATION (U+0009) ? ;
+WHITE_SPACE : /\p{Zs}/ | /\u0009/ | " "
+// punctuation character = ? Unicode General Category P* ? ;
+PUNCTUATION_CHARACTER : /\p{P}/
+// blank line = { white space }, new line character ;
+BLANK_LINE : WHITE_SPACE* NEW_LINE_CHARACTER
+
+// comments       = "-", "-", text item, new line character ;
+COMMENTS : /--(?![-\n])/ TEXT_ITEM+ 
+// block comments = "[", "-", ? any character except "-" followed by "]" ?, "-", "]" ;
+
+%ignore COMMENTS
+
+
+
