@@ -63,7 +63,7 @@ class Parser():
             if token.type == 'YAML_METADATA':
                 metadata = handle_metadata(token, metadata)
 
-        if curr_text and curr_text != " ":
+        if curr_text:
             steps[-1].append({'type': 'text', 'value': curr_text[:-1]})
 
         if not steps[-1]:
