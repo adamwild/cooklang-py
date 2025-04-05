@@ -110,6 +110,7 @@ tests:
             value: "Fry in "
           - type: cookware
             name: "frying pan"
+            units: ""
             quantity: 1
       metadata: {}
 
@@ -124,6 +125,7 @@ tests:
             value: "Fry in "
           - type: cookware
             name: "7-inch nonstick frying pan"
+            units: ""
             quantity: 1
       metadata: {}
 
@@ -138,6 +140,7 @@ tests:
             value: "Fry in "
           - type: cookware
             name: "frying pan"
+            units: ""
             quantity: 1
       metadata: {}
 
@@ -153,6 +156,7 @@ tests:
           - type: cookware
             name: "pan"
             quantity: 1
+            units: ""
           - type: text
             value: " for some time"
       metadata: {}
@@ -166,6 +170,7 @@ tests:
         -
           - type: cookware
             name: "frying pan"
+            units: ""
             quantity: 2
       metadata: {}
 
@@ -178,6 +183,7 @@ tests:
         -
           - type: cookware
             name: "frying pan"
+            units: ""
             quantity: three
       metadata: {}
 
@@ -190,6 +196,7 @@ tests:
         -
           - type: cookware
             name: "frying pan"
+            units: ""
             quantity: two small
       metadata: {}
 
