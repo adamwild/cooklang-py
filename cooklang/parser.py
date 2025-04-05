@@ -57,7 +57,7 @@ class Parser():
                     steps[-1].append({'type': 'text', 'value': curr_text})
                     curr_text = ""
 
-            if token.type in ["ONE_WORD_INGREDIENT", 'ONE_WORD_COOKWARE', "MULTIWORD_COOKWARE", "MULTIWORD_INGREDIENT", "TIMER"]:
+            if token.type in ["INGREDIENT", "COOKWARE", "TIMER"]:
                 steps[-1].append(handle_token(token))
 
             if token.type == 'YAML_METADATA':
@@ -152,13 +152,10 @@ def handle_token(token):
 
         return quantity
 
-    import numbers
-
     value = token.value
 
     units = ""
     quantity = ""
-
 
     if '{' in value:
         ind_open_curly = value.index('{')
@@ -167,31 +164,19 @@ def handle_token(token):
         amount = value[ind_open_curly+1:-1]
         quantity, units = parse_amount(amount)
 
-
     else:
         name = value[1:]
 
     quantity = parse_quantity(quantity)
 
-    if token.type in ["ONE_WORD_INGREDIENT", "MULTIWORD_INGREDIENT"]:
-        if not quantity:
+    if not quantity:
+        if token.type == "INGREDIENT":
             quantity = "some"
 
-        return {'type': 'ingredient', 'name': name, 'quantity': quantity, 'units': units}
-    
-    if token.type in ['ONE_WORD_COOKWARE', "MULTIWORD_COOKWARE"]:
-        if not quantity:
+        elif token.type == "COOKWARE":
             quantity = 1
 
-        if token.value == '#pot':
-            return {'type': 'cookware', 'name': name, 'quantity': quantity, 'units': units}
-
-        return {'type': 'cookware', 'name': name, 'quantity': quantity}
-    
-    if token.type == 'TIMER':
-        return {'type': 'timer', 'quantity': quantity, 'units': units, 'name': name}
-
-
+    return {'type': token.type.lower(), 'name': name, 'quantity': quantity, 'units': units}
 
 if __name__ == '__main__':
     ClangParser = Parser()

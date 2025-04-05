@@ -15,7 +15,7 @@ META_KEY : /[^\n\r\u0085\u2028\u2029:]+/
 META_VALUE : TEXT_ITEM+
 
 // step     = { text item | ingredient | cookware | timer }-, new line character, blank line ;
-step : (TEXT_ITEM | ingredient | cookware | TIMER)+ NEW_LINE_CHARACTER BLANK_LINE
+step : (TEXT_ITEM | INGREDIENT | COOKWARE | TIMER)+ NEW_LINE_CHARACTER BLANK_LINE
 
 TEXT : TEXT_ITEM+
 //
@@ -26,14 +26,14 @@ NOTE : (NOTE_MARKER TEXT_ITEM+ BLANK_LINE)+ BLANK_LINE
 //
 // ingredient           = one word ingredient | multiword ingredient ;
 // | MULTIWORD_INGREDIENT???
-ingredient : ONE_WORD_INGREDIENT | MULTIWORD_INGREDIENT
+INGREDIENT : ONE_WORD_INGREDIENT | MULTIWORD_INGREDIENT
 // one word ingredient  = "@", one word component ;
 ONE_WORD_INGREDIENT : "@" ONE_WORD_COMPONENT
 // multiword ingredient = "@", multiword component ;
 MULTIWORD_INGREDIENT :  "@" MULTIWORD_COMPONENT
 //
 // cookware             = one word cookware | multiword cookware ;
-cookware : ONE_WORD_COOKWARE | MULTIWORD_COOKWARE
+COOKWARE : ONE_WORD_COOKWARE | MULTIWORD_COOKWARE
 // one word cookware    = "#", one word component ;
 ONE_WORD_COOKWARE : "#" ONE_WORD_COMPONENT
 // multiword cookware   = "#", multiword component ;
