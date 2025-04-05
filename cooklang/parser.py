@@ -36,26 +36,26 @@ class Parser():
         metadata = {}
 
         curr_text = ""
-        tokens = list(tokens)
 
-        is_new_line = False
+        for token in tokens:
 
-        for ind, token in enumerate(tokens):
-            if is_new_line and token.type == 'BLANK_LINE' and steps[-1]:
+            if token.type == "MULTIPLE_BLANK_LINES":
+                if curr_text:
+                    steps[-1].append({'type': 'text', 'value': curr_text})
+                    curr_text = ""
                 steps.append([])
                 continue
-            else:
-                is_new_line = (token.type == 'BLANK_LINE' and len(token.value) == 1) or token.type == "NEW_LINE_CHARACTER"
+
+            elif curr_text and token.type == "BLANK_LINE":
+                curr_text += " "
+                continue
 
             if token.type == "TEXT_ITEM":
                 curr_text += token.value
 
             if curr_text and not token.type == "TEXT_ITEM":
-                if is_new_line and ind != len(tokens)-1 and tokens[ind+1].type == "TEXT_ITEM":
-                    curr_text += " "
-                else:
-                    steps[-1].append({'type': 'text', 'value': curr_text})
-                    curr_text = ""
+                steps[-1].append({'type': 'text', 'value': curr_text})
+                curr_text = ""
 
             if token.type in ["INGREDIENT", "COOKWARE", "TIMER"]:
                 steps[-1].append(handle_token(token))
@@ -63,8 +63,8 @@ class Parser():
             if token.type == 'YAML_METADATA':
                 metadata = handle_metadata(token, metadata)
 
-        if curr_text:
-            steps[-1].append({'type': 'text', 'value': curr_text})
+        if curr_text and curr_text != " ":
+            steps[-1].append({'type': 'text', 'value': curr_text[:-1]})
 
         if not steps[-1]:
             steps = steps[:-1]
@@ -118,8 +118,6 @@ def handle_metadata(token, metadata):
                 metadata[key] = value
 
     return metadata
-
-
 
 def handle_token(token):
     def parse_amount(amount):

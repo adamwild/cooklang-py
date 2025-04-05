@@ -15,7 +15,10 @@ META_KEY : /[^\n\r\u0085\u2028\u2029:]+/
 META_VALUE : TEXT_ITEM+
 
 // step     = { text item | ingredient | cookware | timer }-, new line character, blank line ;
-step : (TEXT_ITEM | INGREDIENT | COOKWARE | TIMER)+ NEW_LINE_CHARACTER BLANK_LINE
+step : (TEXT_ITEM | INGREDIENT | COOKWARE | TIMER)+ end_step
+
+end_step : BLANK_LINE | MULTIPLE_BLANK_LINES
+MULTIPLE_BLANK_LINES : BLANK_LINE BLANK_LINE+
 
 TEXT : TEXT_ITEM+
 //
